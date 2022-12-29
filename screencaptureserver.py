@@ -87,17 +87,10 @@ def parse(method):
 	elif method == "raw_bgra": #4bytes per pixel -- shape data has to be returned too
 		return grabbed.bgra
 
-	elif method == "ppm": #2fps😳 there can be a better way but i don't see the point of this
+	elif method == "ppm": #similar to jpg
 		w, h = grabbed.size.width, grabbed.size.height
 		ppm = b"P6\n" + "{} {} {}\n".format(w, h, 255).encode("ascii")
-
-		bgra = grabbed.bgra
-		rgb = np.empty((w*h*3), np.int8)
-		for i in range(w*h):
-			rgb[i*3 + 0] = bgra[i*4 + 2]
-			rgb[i*3 + 1] = bgra[i*4 + 1]
-			rgb[i*3 + 2] = bgra[i*4 + 0]
-		ppm += rgb.tobytes()
+		ppm += grabbed.rgb
 
 		return ppm
 

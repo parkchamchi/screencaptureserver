@@ -19,7 +19,7 @@ GET localhost:5000/screencaptureserver/jpg?monitor_num=2
 - jpg
 - png
 - raw_bgra
-- ppm (unoptimized)
+- ppm
 
 ## Benchmark
 For 1080p, I could get 20fps for videos and 30fps for relatively still screens.
