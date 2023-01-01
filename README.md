@@ -8,15 +8,19 @@ python screencaptureserver.py
 ```
 Send a GET request (utilize [test.py](./test.py))
 ```
-GET localhost:5000/scserver/jpg
+GET localhost:5000/scserver/default/jpg
 ```
 To capture the second monitor:
 ```
-GET localhost:5000/scserver/jpg?monitor_num=2
+GET localhost:5000/scserver/default/jpg?monitor_num=2
 ```
 Set the margin by {`left`, `right`, `up`, `down`}. To cut the left half:
 ```
-GET localhost:5000/scserver/jpg?monitor_num=2&left=50
+GET localhost:5000/scserver/default/jpg?monitor_num=2&left=50
+```
+`gui.py` is a tkinter script to set the margin. It's a bit clunky (not parallelized) and inaccurate now.
+```
+GET localhost:5000/scserver/gui/jpg
 ```
 
 ### Supported methods

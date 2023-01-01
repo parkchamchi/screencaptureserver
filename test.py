@@ -5,8 +5,9 @@ import cv2
 import time
 
 host = "http://127.0.0.1:5000"
-method = "jpg"
-url = f"{host}/scserver/{method}"
+method0 = "default"
+method1 = "jpg"
+url = f"{host}/scserver/{method0}/{method1}"
 
 params={
 	"monitor_num": 2, #Has to be changed if you have a secondary mornitor

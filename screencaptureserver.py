@@ -1,36 +1,40 @@
 import mss
 import flask
 from PIL import Image
-import numpy as np
 
 import traceback
 import io
 
 app = flask.Flask(__name__)
 
-def get_screen(sct, monitor_num, margins: dict=None):
+gui_margins = {}
+
+def get_screen(sct, monitor_num=0, margins: dict=None):
 	"""
 	returns `mss.base.ScreenShot` obj.
 	"""
 
-	#margins: {left, right, top, down}, with values = [0, ..., 1)
+	#margins: {left, right, top, down}
 
 	monitor = sct.monitors[monitor_num].copy()
 
-	if margins is not None:
-		left_m = int(monitor["width"] * margins["left"])
-		right_m = int(monitor["width"] * margins["right"])
+	margins_f = {}
+	for key in ["left", "right", "up", "down"]:
+		margins_f[key] = float(margins[key]) / 100 if key in margins else 0
 
-		monitor["left"] += left_m
-		monitor["width"] -= left_m
-		monitor["width"] -= right_m
+	left_m = int(monitor["width"] * margins_f["left"])
+	right_m = int(monitor["width"] * margins_f["right"])
 
-		up_m = int(monitor["height"] * margins["up"])
-		down_m = int(monitor["height"] * margins["down"])
+	monitor["left"] += left_m
+	monitor["width"] -= left_m
+	monitor["width"] -= right_m
 
-		monitor["top"] += up_m
-		monitor["height"] -= up_m
-		monitor["height"] -= down_m
+	up_m = int(monitor["height"] * margins_f["up"])
+	down_m = int(monitor["height"] * margins_f["down"])
+
+	monitor["top"] += up_m
+	monitor["height"] -= up_m
+	monitor["height"] -= down_m
 
 	w = monitor["width"]
 	h = monitor["height"]
@@ -40,41 +44,7 @@ def get_screen(sct, monitor_num, margins: dict=None):
 	grabbed = sct.grab(monitor)
 	return grabbed
 
-@app.route("/screencaptureserver/<method>")
-@app.route("/scserver/<method>")
-def parse(method):
-	"""
-	Returns a png bytestring
-
-	parameters:
-		monitor_num: defaults to 0 if not given
-		MARGINS: {left, right, up, down} can be given, as percentage to be cut
-
-	e.g.
-		/scserver/jpg?monitor_num=2&left=50
-	"""
-
-	args = flask.request.args
-
-	monitor_num = int(args["monitor_num"]) if "monitor_num" in args else 0
-
-	margins = None
-	#This feature seems to be broken for a single mss object
-	margins = {}
-	for key in ["left", "right", "up", "down"]:
-		margins[key] = (float(args[key]) / 100) if key in args else 0
-
-	#with mss.mss() as sct:
-	global sct
-	try:
-		grabbed = get_screen(sct, monitor_num, margins)
-	except ValueError as exc:
-		print('\n', '*'*32, "EXCEPTION", '*'*32)
-		traceback.print_exc()
-		print('*'*75)
-
-		flask.abort(404)
-
+def as_bytes(grabbed, method="jpg"):
 	#Tested on 1080p video
 	if method == "png": #8fps
 		return mss.tools.to_png(grabbed.rgb, grabbed.size) #main overhead
@@ -98,8 +68,54 @@ def parse(method):
 		return ppm
 
 	else:
-		print(f"Illegal method {method}")
+		raise ValueError(f"Unsupported method {method}")
+
+@app.route("/scserver/gui/<method>")
+def gui_jpg(method):
+	global sct
+
+	grabbed = get_screen(sct, margins=gui_margins)
+	return as_bytes(grabbed, method)
+
+@app.route("/scserver/gui/margins", methods=["PUT"])
+def put_gui_margins():
+	global gui_margins
+
+	if not flask.request.is_json:
+		raise ValueError("Not json")
+
+	gui_margins = flask.request.get_json()
+	return ""
+
+@app.route("/screencaptureserver/<method>")
+@app.route("/scserver/default/<method>")
+def parse(method):
+	"""
+	Returns a png bytestring
+
+	parameters:
+		monitor_num: defaults to 0 if not given
+		MARGINS: {left, right, up, down} can be given, as percentage to be cut
+
+	e.g.
+		/scserver/jpg?monitor_num=2&left=50
+	"""
+	args = flask.request.args
+	monitor_num = int(args["monitor_num"]) if "monitor_num" in args else 0
+
+	global sct
+
+	grabbed = get_screen(sct, monitor_num, args)
+	return as_bytes(grabbed, method)
+
+	"""
+	except ValueError as exc:
+		print('\n', '*'*32, "EXCEPTION", '*'*32)
+		traceback.print_exc()
+		print('*'*75)
+
 		flask.abort(404)
+	"""
 
 if __name__ == "__main__":
 	sct = mss.mss()
