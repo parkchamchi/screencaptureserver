@@ -8,15 +8,15 @@ python screencaptureserver.py
 ```
 Send a GET request (utilize [test.py](./test.py))
 ```
-GET localhost:5000/screencaptureserver/jpg
+GET localhost:5000/scserver/jpg
 ```
 To capture the second monitor:
 ```
-GET localhost:5000/screencaptureserver/jpg?monitor_num=2
+GET localhost:5000/scserver/jpg?monitor_num=2
 ```
 Set the margin by {`left`, `right`, `up`, `down`}. To cut the left half:
 ```
-GET localhost:5000/screencaptureserver/jpg?monitor_num=2&left=50
+GET localhost:5000/scserver/jpg?monitor_num=2&left=50
 ```
 
 ### Supported methods
