@@ -6,14 +6,14 @@ import time
 
 host = "http://127.0.0.1:5000"
 method = "jpg"
-url = f"{host}/screencaptureserver/{method}"
+url = f"{host}/scserver/{method}"
 
 params={
 	"monitor_num": 2, #Has to be changed if you have a secondary mornitor
-	#"left": .1,
-	#"right": .2,
-	#"up": .3,
-	#"down": .4
+	#"left": 50,
+	#"right": 50,
+	#"up": 30,
+	#"down": 40,
 }
 
 print(f"Connecting to {host}, params={params}")
