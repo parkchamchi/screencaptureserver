@@ -15,7 +15,7 @@ def get_screen(sct, monitor_num, margins: dict=None):
 
 	#margins: {left, right, top, down}
 
-	monitor = sct.monitors[monitor_num]
+	monitor = sct.monitors[monitor_num].copy()
 
 	if margins is not None:
 		left_m = int(monitor["width"] * margins["left"])
@@ -54,14 +54,12 @@ def parse(method):
 
 	margins = None
 	#This feature seems to be broken for a single mss object
-	"""
 	margins = {}
 	for key in ["left", "right", "up", "down"]:
 		if key not in args:
 			margins = None
 			break
 		margins[key] = float(args[key])
-	"""
 
 	#with mss.mss() as sct:
 	global sct
