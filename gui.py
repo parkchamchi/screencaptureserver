@@ -1,6 +1,7 @@
 import requests
 
 import tkinter as tk
+import threading
 
 class Screen:
 	def __init__(self, w, h):
@@ -69,7 +70,8 @@ def clicked(event):
 
 	margins = screen.get_margins()
 	print(margins)
-	requests.put(f"{host}/gui/margins", json=margins)
+
+	threading.Thread(target=lambda: requests.put(f"{host}/gui/margins", json=margins)).start()
 
 def show_borders():
 	global lbl_borders, lbl_image
