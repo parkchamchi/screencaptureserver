@@ -18,7 +18,8 @@ Set the margin by {`left`, `right`, `up`, `down`}. To cut the left half:
 ```
 GET localhost:5000/scserver/default/jpg?monitor_num=2&left=50
 ```
-`gui.py` is a tkinter script to set the margin. It's a bit clunky (not parallelized) and inaccurate now.
+`gui.py` is a simple tkinter script to set the margin. Use left/right mouse to set the borders.<br>
+![gui](./gui.jpg)
 ```
 GET localhost:5000/scserver/gui/jpg
 ```
@@ -26,7 +27,6 @@ GET localhost:5000/scserver/gui/jpg
 ### Supported methods
 - jpg
 - png
-- raw_bgra
 - ppm
 
 ## Benchmark

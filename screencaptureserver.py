@@ -2,7 +2,6 @@ import mss
 import flask
 from PIL import Image
 
-import traceback
 import io
 
 app = flask.Flask(__name__)
