@@ -9,9 +9,10 @@ class Screen:
 
 		self.borders = [(0, 0), (1, 1)]
 
-	def set_border(self, x, y):
-		self.borders.pop(0)
-		self.borders.append((x/self.w, y/self.h))
+	def set_border(self, x, y, border_idx):
+		assert border_idx in [0, 1]
+
+		self.borders[border_idx] = ((x/self.w, y/self.h))
 
 	def get_margins(self):
 		left = min(self.borders, key=lambda x: x[0])[0]
@@ -53,9 +54,17 @@ def update():
 	#show_borders()
 
 def clicked(event):
+	num = event.num
+	if num == 1: #left click
+		border_idx = 0
+	elif num == 3: #right licke
+		border_idx = 1
+	else:
+		return
+
 	x, y = event.x, event.y
 
-	screen.set_border(x, y)
+	screen.set_border(x, y, border_idx)
 	show_borders()
 
 	margins = screen.get_margins()
@@ -80,7 +89,7 @@ btn_update.pack(side=tk.LEFT)
 frm_control.pack()
 
 lbl_image = tk.Label()
-lbl_image.bind("<Button-1>", clicked)
+lbl_image.bind("<Button>", clicked)
 lbl_image.pack()
 
 lbl_borders = [tk.Label(bg=color, fg="white", text='↖') for color in ["red", "blue"]]
