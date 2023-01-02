@@ -21,7 +21,7 @@ class Screen:
 
 		margins = {}
 		for key, value in zip(["left", "up", "right", "down"], [left, up, right, down]):
-			margins[key] = str(int(value * 100))
+			margins[key] = str(float(value * 100))
 
 		return margins
 
